@@ -82,9 +82,9 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'login-api',
         'CLIENT': {
-        'host': 'mongodb+srv://gopal:9582870584@cluster0-uvivi.mongodb.net/test?retryWrites=true&w=majority'},
+        'host': 'mongodb+srv://gopal:***********@cluster0-uvivi.mongodb.net/test?retryWrites=true&w=majority'},
         'USER': 'gopal',
-        'PASSWORD': '9582870584',
+        'PASSWORD': '******',
     }
 }
 

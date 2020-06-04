@@ -3,9 +3,9 @@ from mongoengine import *
 # Create your models here.
 connect(
     db = 'login-api',
-    host='mongodb+srv://gopal:9582870584@cluster0-uvivi.mongodb.net/login-api?retryWrites=true&w=majority',
+    host='mongodb+srv://gopal:**********@cluster0-uvivi.mongodb.net/login-api?retryWrites=true&w=majority',
     username='gopal',
-    password='9582870584'
+    password='*********'
 )
 class Login(Document):
     username = StringField(max_length=50 , required=True )

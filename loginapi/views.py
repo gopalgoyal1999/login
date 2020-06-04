@@ -1,22 +1,23 @@
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework_mongoengine import viewsets
 from rest_framework.response import Response
 from .models import Login
-from .serializers import loginserializers,signserializers
+from .serializers import registerserializers,signserializers
 from rest_framework.views import APIView
+from  django.shortcuts import redirect
 
 class RegistraionView(viewsets.ModelViewSet):
 
     lookup_field = 'id'
-    serializer_class = loginserializers
+    serializer_class = registerserializers
 
     def get_queryset(self):
         return Login.objects.all()
 
     def post(self, request):
-        serializer = loginserializers(data=request.data)
+        serializer = registerserializers(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
@@ -24,28 +25,38 @@ class RegistraionView(viewsets.ModelViewSet):
 
 
 class LoginView(APIView):
-    authentication_classes = (SessionAuthentication,BasicAuthentication)
-    #permission_classes = (IsAuthenticated,)
 
     lookup_field = 'id'
     serializer_class = signserializers
 
     def post(self, request):
         groups = Login.objects.all()
-        data = request.data
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         serializer = signserializers(data=request.data)
         if serializer.is_valid():
             for group in groups:
-                if data['password'] == group['password'] and data['username'] == group['username']:
-
+                if password == group['password'] and username == group['username']:
+                    request.session['m_id'] = password+username
                     return Response(status=status.HTTP_200_OK)
-                else :
-                    return Response(status=status.HTTP_403_FORBIDDEN)
+
+            return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # def get(self, request, format=None):
-    #     content = {
-    #         'user': unicode(request.user),
-    #         'auth': unicode(request.auth),  # None
-    #     }
-    #     return Response(content
+class LogOutView(APIView):
+    # authentication_classes = (SessionAuthentication,)
+    # permission_classes = (IsAuthenticated,)
+    def post(self,request):
+        if request.session['m_id'] != 0:
+            print("SUCCESSFULLY LOGOUT")
+            del request.session['m_id']
+            return redirect('/login/')
+        else :
+            print("SIGN_IN / SIGN_UP ")
+            return redirect('/login/')
+        return Response(status=status.HTTP_200_OK)
+
+#
+# if data['password'] == group['password'] and data['username'] == group['username']:
+#     request.session['m_id'] = data['password'] + data['username']
+#     return Response(status=status.HTTP_200_OK)
