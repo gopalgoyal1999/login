@@ -9,3 +9,9 @@ class loginserializers(serializers.DocumentSerializer):
                         'email': {'write_only': True},
                         #'username': {'write_only': True}
                         }
+
+class signserializers(serializers.DocumentSerializer):
+    class Meta:
+        model = Login
+        fields = ('username','password')
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 7}}
